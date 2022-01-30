@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hello, World! - A-Frame</title>
+    <meta name="description" content="Hello, World! - A-Frame">
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
+
+   </head>
+  <body>
+    <a-scene>
+<a-assets>
+  <!-- ... -->
+  <img id="groundTexture" src="https://cdn.glitch.global/46b81164-71fc-4c5a-92a2-7c8c010f42fb/ocean.jpg?v=1643411698142">
+  <!-- ... -->
+</a-assets>
+
+        <a-entity  environment="preset: starry; ground:"></a-entity>
+
+<!-- ... -->
+<a-plane src="#groundTexture" rotation="-90 0 0" width="900" height="900"  position="-10 -10 -10"></a-plane>
+<!-- ... -->
+<!--  <a-entity environment="preset: forest; dressingAmount: 500"></a-entity>-->
+
+    </a-scene>
+  </body>
+</html>
