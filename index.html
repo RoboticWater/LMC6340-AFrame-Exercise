@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- <title>Welcome to Glitch!</title> -->
+    <!-- <meta name="description" content="A cool thing made with Glitch"> -->
+    <!-- <link id="favicon" rel="icon" href="https://glitch.com/edit/favicon-app.ico" type="image/x-icon"> -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="./displacement-shader.js"></script>
+</head>
+
+<script>
+    // var uniforms = THREE.UniformsUtils.merge([
+    //     THREE.ShaderLib.phong.uniforms,
+    //     { diffuse: { value: new THREE.Color('#000000') } },
+    //     {
+    //         time: { value: 0.0 },
+    //         emissive: { type: 'c', value: new THREE.Color(0x000000) },
+    //         specular: { type: 'c', value: new THREE.Color(0xffffff) }
+    //     }
+    // ]);
+    // console.log(uniforms);
+    const uniforms = {
+        time: { value: 0.0 },
+        offset: { value: 0.0 },
+        handMask: {
+            type: "t",
+            value: THREE.ImageUtils.loadTexture("HandMask.png")
+        }
+    }
+    AFRAME.registerComponent('tree-manager', {
+        init: function () {
+            let el = this.el;
+            let comp = this;
+            let data = this.data;
+            comp.scene = el.sceneEl.object3D;
+            comp.counter = 0;
+            comp.treeModels = [];
+            comp.modelLoaded = false;
+
+            // After gltf model has loaded, modify it materials.
+            el.addEventListener('model-loaded', function (ev) {
+                let mesh = el.getObject3D('mesh');
+                if (!mesh) { return; }
+                //console.log(mesh);
+                mesh.traverse(function (node) {
+                    if (node.isMesh) {
+                        // let mat = new THREE.MeshStandardMaterial;
+                        // let color = new THREE.Color(0xaa5511);
+                        // mat.color = color;
+                        // mat.wireframe = true;
+                        // node.material = mat;
+                        node.material = new THREE.ShaderMaterial({
+                            uniforms,
+                            vertexShader: vert,
+                            fragmentShader: frag,
+                            // lights: true,
+                        })
+                    }
+                });
+                comp.modelLoaded = true;
+            });
+        }
+    });
+
+    var startTime = Date.now();
+    var slider;
+    animate();
+
+    window.addEventListener('load', () => {
+        slider = document.querySelector('input');
+        console.log(slider.value);
+    })
+
+    function animate() {
+        requestAnimationFrame(animate);
+        render();
+    }
+    function render() {
+        var elapsedMilliseconds = Date.now() - startTime;
+        var elapsedSeconds = elapsedMilliseconds / 1000.;
+        uniforms.time.value = 60. * elapsedSeconds;
+        if (slider) uniforms.offset.value = slider.value;
+    }
+</script>
+
+<body>
+    <a-scene>
+        <a-assets>
+            <a-asset-item id="bakcdrop" src="./TelevisionBackdrop.glb"></a-asset-item>
+            <a-asset-item id="tv-screen" src="./TelevisionScreen.glb"></a-asset-item>
+            <a-asset-item id="tv-body" src="./TelevisionBody.glb"></a-asset-item>
+            <img id="groundTexture" src="https://cdn.aframe.io/a-painter/images/floor.jpg">
+            <img id="skyTexture" src="https://cdn.aframe.io/a-painter/images/sky.jpg">
+            <!-- <img id="sky" src="./photo_studio_loft_hall_2k.png"> -->
+        </a-assets>
+        <!-- <a-sky src="#sky"></a-sky> -->
+        <a-entity gltf-model="#tv-screen"
+            animation="property: rotation; from: -5 -10 -7; to: 5 10 7; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine;"
+            animation__2="property: position; from: 0 1 -4; to: 0.2 1.2 -4; dir: alternate; loop: true; dur: 6000; easing: easeInOutSine;"
+            position="0 0 -4" scale='0.5 0.5 0.5' tree-manager>
+        </a-entity>
+        <a-entity gltf-model="#tv-body"
+            animation="property: rotation; from: -5 -10 -7; to: 5 10 7; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine;"
+            animation__2="property: position; from: 0 1 -4; to: 0.2 1.2 -4; dir: alternate; loop: true; dur: 6000; easing: easeInOutSine;"
+            position="0 0 -4" scale='0.5 0.5 0.5'>
+        </a-entity>
+        <a-entity light="type: ambient; color: #ffe"></a-entity>
+        <a-light type="directional" intensity="2" position="0 0 0" rotation="-30 30 0" target="#directionaltarget">
+            <a-entity id="directionaltarget" position="0 0 -1"></a-entity>
+        </a-light>
+        <!-- <a-cylinder id="ground" src="#groundTexture" radius="32" height="0.1"></a-cylinder>
+        <a-sky id="background" src="#skyTexture" theta-length="90" radius="30"></a-sky> -->
+        <!-- <a-gradient-sky material="shader: gradient; topcolor: 255 0 0; bottomcolor: 0 121 255;"></a-gradient-sky> -->
+
+        <!-- <a-sphere scale="1 1 1" radius="0.2" position="0 1.5 -2" segments-height="128" segments-width="128">
+            <a-animation attribute="scale" direction="alternate-reverse" dur="5000" from="1 1 1" to="4 4 4"
+                repeat="indefinite"></a-animation>
+        </a-sphere>-->
+        <!-- <a-box color="#666" width="3" depth="3" height="0.1" position="0 0 -4"></a-box> -->
+    </a-scene>
+    <input type="range" min="0.0" max="3.0" step="0.01" value="0" id="slider">
+</body>
+
+</html>
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    input {
+        margin: 30px;
+        z-index: 10;
+        max-width: 300px;
+    }
+</style>
