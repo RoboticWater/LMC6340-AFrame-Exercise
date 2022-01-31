@@ -11,6 +11,7 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1">
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
   <script src="./displacement-shader.js"></script>
 </head>
 
@@ -84,7 +85,7 @@
     var elapsedMilliseconds = Date.now() - startTime;
     var elapsedSeconds = elapsedMilliseconds / 1000.;
     uniforms.time.value = 60. * elapsedSeconds;
-    if (slider) uniforms.offset.value = slider.value;
+    // if (slider) uniforms.offset.value = slider.value;
   }
 </script>
 
@@ -97,67 +98,47 @@
                     src="./TelevisionScreen.glb"></a-asset-item>
       <a-asset-item id="tv-inside"
                     src="./TelevisionInside.glb"></a-asset-item>
-      <a-asset-item id="tv-waterfall"
-                    src="./TelevisionWaterfall.glb"></a-asset-item>
       <a-asset-item id="tv-body"
                     src="./TelevisionBody.glb"></a-asset-item>
       <img id="groundTexture"
-           src="https://cdn.aframe.io/a-painter/images/floor.jpg">
-      <img id="skyTexture"
-           src="https://cdn.aframe.io/a-painter/images/sky.jpg">
-      <!-- <img id="sky" src="./photo_studio_loft_hall_2k.png"> -->
+           src="https://cdn.glitch.global/46b81164-71fc-4c5a-92a2-7c8c010f42fb/ocean.jpg?v=1643411698142">
     </a-assets>
-    <!-- <a-sky src="#sky"></a-sky> -->
-    <!-- <a-entity gltf-model="#tv-screen"
-            animation="property: rotation; from: -5 -10 -7; to: 5 10 7; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine;"
-            animation__2="property: position; from: 0 1 -4; to: 0.2 1.2 -4; dir: alternate; loop: true; dur: 6000; easing: easeInOutSine;"
-            position="0 0 -4" scale='0.5 0.5 0.5' custom-noise>
-        </a-entity> -->
+    <a-entity environment="preset: starry; ground:"></a-entity>
     <a-entity gltf-model="#tv-body"
               animation="property: rotation; from: -2 -5 -3; to: 2 5 3; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine;"
-              animation__2="property: position; from: 0 1 -4; to: 0.2 1.2 -4; dir: alternate; loop: true; dur: 6000; easing: easeInOutSine;"
+              animation__2="property: position; from: -2 1 -4; to: -2.2 1.2 -4; dir: alternate; loop: true; dur: 6000; easing: easeInOutSine;"
               position="0 0 -4"
               scale='0.5 0.5 0.5'>
     </a-entity>
     <a-entity gltf-model="#tv-inside"
               animation="property: rotation; from: -2 -5 -3; to: 2 5 3; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine;"
-              animation__2="property: position; from: 0 1 -4; to: 0.2 1.2 -4; dir: alternate; loop: true; dur: 6000; easing: easeInOutSine;"
+              animation__2="property: position; from: -2 1 -4; to: -2.2 1.2 -4; dir: alternate; loop: true; dur: 6000; easing: easeInOutSine;"
               position="0 0 -4"
               scale='0.5 0.5 0.5'
               custom-noise>
     </a-entity>
-    <!-- <a-entity gltf-model="#tv-waterfall"
-              animation="property: rotation; from: -2 -5 -3; to: 2 5 3; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine;"
-              animation__2="property: position; from: 0 1 -4; to: 0.2 1.2 -4; dir: alternate; loop: true; dur: 6000; easing: easeInOutSine;"
-              position="0 0 -4"
-              scale='0.5 0.5 0.5'
-              custom-noise>
-    </a-entity> -->
-    <a-entity light="type: ambient; color: #ffe"></a-entity>
-    <a-light type="directional"
+    <a-plane material="src:#groundTexture; repeat: 5 5"
+             rotation="-90 0 0"
+             width="900"
+             height="900"
+             position="-10 -10 -10"></a-plane>
+    <!-- <a-scene fog="type: exponential; color: #000"></a-scene> -->
+    <a-entity light="type: ambient; color: #dB8B30"></a-entity>
+    <!-- <a-light type="directional"
              intensity="2"
              position="0 0 0"
              rotation="-30 30 0"
              target="#directionaltarget">
       <a-entity id="directionaltarget"
                 position="0 0 -1"></a-entity>
-    </a-light>
-    <!-- <a-cylinder id="ground" src="#groundTexture" radius="32" height="0.1"></a-cylinder>
-        <a-sky id="background" src="#skyTexture" theta-length="90" radius="30"></a-sky> -->
-    <!-- <a-gradient-sky material="shader: gradient; topcolor: 255 0 0; bottomcolor: 0 121 255;"></a-gradient-sky> -->
-
-    <!-- <a-sphere scale="1 1 1" radius="0.2" position="0 1.5 -2" segments-height="128" segments-width="128">
-            <a-animation attribute="scale" direction="alternate-reverse" dur="5000" from="1 1 1" to="4 4 4"
-                repeat="indefinite"></a-animation>
-        </a-sphere>-->
-    <!-- <a-box color="#666" width="3" depth="3" height="0.1" position="0 0 -4"></a-box> -->
+    </a-light> -->
   </a-scene>
-  <input type="range"
+  <!-- <input type="range"
          min="0.0"
          max="3.0"
          step="0.01"
          value="0"
-         id="slider">
+         id="slider"> -->
 </body>
 
 </html>

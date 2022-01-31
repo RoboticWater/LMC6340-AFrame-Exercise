@@ -161,6 +161,6 @@ const frag = `
         vec3 color = vec3(1. - 2. * noise);
         // gl_FragColor = vec4(color, 1);
         // gl_FragColor = texture2D(tex, vUv + vec2(0, time * -0.01)) * vec4(1,1,1,);
-        gl_FragColor = vec4(0,0.2,0.8,(3. - 3.5*vUv.y) * texture2D(tex, vUv + vec2(0, time * -0.01)).r);
+        gl_FragColor = vec4(0.125,0.306,0.176,(3. - 3.5*vUv.y) * texture2D(tex, vUv + vec2(0, time * -0.005)).r);
     }
 `;
