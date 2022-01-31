@@ -56,6 +56,7 @@
               vertexShader: vert,
               fragmentShader: frag,
             })
+            mat.side = THREE.DoubleSide;
             mat.alphaTest = 0.5;
             mat.transparent = true;
             node.material = mat;
