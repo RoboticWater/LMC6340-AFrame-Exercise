@@ -111,63 +111,6 @@ float pnoise3(vec3 P, vec3 rep)
 
 `;
 
-// AFRAME.registerShader("displacement", {
-//   schema: {
-//     timeMsec: { type: "time", is: "uniform" },
-//   },
-//   vertexShader:
-//     pnoise3 +
-//     `
-
-// //
-// // Based on @thespite's article:
-// //
-// // "Vertex displacement with a noise function using GLSL and three.js"
-// // Source: https://www.clicktorelease.com/blog/vertex-displacement-noise-3d-webgl-glsl-three-js/
-// //
-
-// varying float noise;
-// uniform float timeMsec; // A-Frame time in milliseconds.
-
-// float turbulence( vec3 p ) {
-
-//   float w = 100.0;
-//   float t = -.5;
-
-//   for (float f = 1.0 ; f <= 10.0 ; f++ ){
-//     float power = pow( 2.0, f );
-//     t += abs( pnoise3( vec3( power * p ), vec3( 10.0, 10.0, 10.0 ) ) / power );
-//   }
-
-//   return t;
-
-// }
-
-// void main() {
-//   float time = timeMsec / 1000.0; // Convert from A-Frame milliseconds to typical time in seconds.
-//   noise = 10.0 *  -.10 * turbulence( .5 * normal + time / 3.0 );
-//   float b = 5.0 * pnoise3( 0.05 * position, vec3( 100.0 ) );
-//   float displacement = (- 10. * noise + b) / 50.0;
-
-//   vec3 newPosition = position + normal * displacement;
-//   gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
-// }
-
-// `,
-//   fragmentShader: `
-
-// varying float noise;
-
-// void main() {
-
-//   vec3 color = 0;
-//   gl_FragColor = vec4( color.rgb, 1 );
-
-// }
-
-// `,
-// });
-
 const vert =
   pnoise3 +
   `//
@@ -178,11 +121,10 @@ const vert =
     //
 
     varying float noise;
-    varying vec4 worldPosition;
-    uniform float time; // A-Frame time in milliseconds.
+    uniform float time;
     uniform float offset;
     varying vec2 vUv;
-    uniform sampler2D handMask;
+    uniform sampler2D tex;
 
     float turbulence( vec3 p ) {
 
@@ -199,9 +141,9 @@ const vert =
 
     void main() {
         vUv = uv;
-        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
         noise = 10.0 *  -.10 * turbulence( .5 * normal + time / 1000.0 );
-        float b = 5.0 * pnoise3( 0.05 * position, vec3( 100.0 ) );
+        float b = 5.0 * pnoise3( 0.05 * vec3(vUv, 0), vec3( 100.0 ) );
+        // float b = 5.0 * pnoise3( 0.05 * position, vec3( 100.0 ) );
         float displacement = (10. * noise + b) / 1.0;
 
         vec3 newPosition = position + normal.xyz * offset * sin(vUv.x * 3.1415) * sin(vUv.y * 3.1415) * displacement * 0.5;
@@ -213,10 +155,12 @@ const vert =
 const frag = `
     varying float noise;
     varying vec2 vUv;
-    uniform sampler2D handMask;
+    uniform float time;
+    uniform sampler2D tex;
     void main() {
         vec3 color = vec3(1. - 2. * noise);
-        gl_FragColor = vec4(color, 1);
-        // gl_FragColor = texture2D(handMask, vUv / 2. + vec2(0.25,0.25));
+        // gl_FragColor = vec4(color, 1);
+        // gl_FragColor = texture2D(tex, vUv + vec2(0, time * -0.01)) * vec4(1,1,1,);
+        gl_FragColor = vec4(0,0.2,0.8,(3. - 3.5*vUv.y) * texture2D(tex, vUv + vec2(0, time * -0.01)).r);
     }
 `;
